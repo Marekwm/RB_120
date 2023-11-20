@@ -18,9 +18,10 @@ class Move
 end
 
 class Player
-  attr_accessor :move, :name
+  attr_accessor :move, :name, :score
 
   def initialize
+    @score = 0
     set_name
   end
 end
@@ -69,6 +70,7 @@ class RPSGame
   
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors!"
+    puts "First to 5 wins the game"
   end
   
   def display_goodbye_message
@@ -80,12 +82,18 @@ class RPSGame
     puts "#{computer.name} chose #{computer.move}"
   end
   
+  def display_scores
+    puts "#{human.name} has #{human.score} points"
+    puts "#{computer.name} has #{computer.score} points"
+  end 
+  
   def display_winner
-    display_choices
     if human.move > computer.move
       puts "#{human.name} Won!"
+      human.score += 1
     elsif computer.move > human.move
       puts "#{computer.name} Won!"
+      computer.score += 1
     else
       puts "It's a tie!"
     end
@@ -105,10 +113,15 @@ class RPSGame
 
   def play
     display_welcome_message
-    loop do
-      human.choose
-      computer.choose
-      display_winner
+    loop do 
+      loop do
+        human.choose
+        computer.choose
+        display_choices
+        display_winner
+        display_scores
+        break if human.score == 5||computer.score == 5
+      end
       break unless play_again?
     end
     display_goodbye_message
