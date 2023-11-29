@@ -1,12 +1,30 @@
+module Prompt
+  def prompt(message)
+    puts ">>#{message}"
+  end 
+end 
+
 class Move
   VALUES = ['rock', 'paper', 'scissors']
+  MOVES = {'rock' => 'scissors', 'scissors' => 'paper', 'paper' => 'rock'}
+  attr_reader :value
   
-  def intialize(v)
+  def initialize(v)
     @value = v
+  end
+  
+  def >(other_move)
+    return true if MOVES[value] == other_move.value
+    false
+  end 
+  
+  def to_s
+    value
   end 
 end 
 
 class Player
+  include Prompt
   attr_accessor :move, :name
   
   def initialize
@@ -19,10 +37,10 @@ class Human < Player
   def set_name
     n = nil
     loop do 
-      puts "Please enter your name:"
+      prompt "Please enter your name:"
       n = gets.chomp.capitalize
       break unless n.empty?
-      puts "Please enter a valid name."
+      prompt "Please enter a valid name."
     end 
     self.name = n
   end 
@@ -30,10 +48,10 @@ class Human < Player
   def choose
     choice = nil
     loop do 
-      puts "Please choose rock, paper or scissors"
+      prompt "Please choose rock, paper or scissors"
       choice = gets.chomp.downcase
-      break unless Move::VALUES.include?(choice)
-      puts "Please enter a valid choice."
+      break if Move::VALUES.include?(choice)
+      prompt "Please enter a valid choice."
     end 
     self.move = Move.new(choice)
   end 
@@ -52,6 +70,7 @@ end
     
 
 class RPSGame
+  include Prompt
   attr_accessor :human, :computer
 
   def initialize
@@ -60,17 +79,35 @@ class RPSGame
   end
 
   def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors!"
+    prompt "Hi #{human.name}! Welcome to Rock, Paper, Scissors!"
+    prompt "You will be playing a computer named #{computer.name} and it will randomly choose a move."
+    prompt "Let's get started!!!"
   end 
   
   def display_goodbye_message
-    puts "Thanks for playing Rock, Paper, Scissor. Good bye!"
+    prompt "Thanks for playing Rock, Paper, Scissor. Good bye!"
+  end 
+  
+  def display_choices
+    prompt "#{human.name} chose #{human.move}"
+    prompt "#{computer.name} chose #{computer.move}"
+  end 
+  
+  def display_winner
+    if human.move > computer.move
+      prompt "#{human.name} won!"
+    elsif computer.move > human.move
+      prompt "#{computer.name} won!"
+    else
+      prompt "It's a tie"
+    end 
   end 
   
   def play
     display_welcome_message
     human.choose
     computer.choose
+    display_choices 
     display_winner
     display_goodbye_message
   end
