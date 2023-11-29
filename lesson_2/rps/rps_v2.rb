@@ -72,7 +72,7 @@ end
 
 class RPSGame
   include Prompt
-  attr_accessor :human, :computer
+  attr_accessor :human, :computer, :max_score
 
   def initialize
     @human = Human.new
@@ -84,8 +84,6 @@ class RPSGame
     sleep(0.5)
     prompt "You will be playing a computer named #{computer.name} and it will randomly choose a move."
     sleep(2)
-    prompt "First to 5 wins, Let's get started!!!"
-    sleep(1)
   end 
   
   def display_goodbye_message
@@ -116,8 +114,23 @@ class RPSGame
     else
       prompt "It's a tie"
     end 
-  end 
+  end
   
+  def get_max_score
+    max_score = nil
+    loop do
+      prompt "Would you like to play first to 3, 5 or 10 wins?"
+      max_score = gets.to_i
+      break if [3, 5, 10].include?(max_score)
+      prompt "Please choose 3, 5 or 10"
+    end 
+    self.max_score = max_score
+    
+    sleep(1)
+    prompt "First to #{max_score} wins, Let's get started!!!"
+    sleep(1)
+  end 
+    
   def play_again?
     answer = nil
     loop do 
@@ -132,6 +145,7 @@ class RPSGame
       
   def play
     display_welcome_message
+    get_max_score
     loop do 
       loop do 
         human.choose
@@ -140,7 +154,7 @@ class RPSGame
         display_winner
         display_score
         system 'clear'
-        break if human.score == 5 || computer.score == 5
+        break if human.score == max_score || computer.score == max_score
       end 
       break unless play_again?
     end 
