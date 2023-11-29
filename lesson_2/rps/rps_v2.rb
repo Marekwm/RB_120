@@ -25,9 +25,10 @@ end
 
 class Player
   include Prompt
-  attr_accessor :move, :name
+  attr_accessor :move, :name, :score
   
   def initialize
+    @score = 0
     set_name
   end 
 end 
@@ -80,8 +81,11 @@ class RPSGame
 
   def display_welcome_message
     prompt "Hi #{human.name}! Welcome to Rock, Paper, Scissors!"
+    sleep(0.5)
     prompt "You will be playing a computer named #{computer.name} and it will randomly choose a move."
-    prompt "Let's get started!!!"
+    sleep(2)
+    prompt "First to 5 wins, Let's get started!!!"
+    sleep(1)
   end 
   
   def display_goodbye_message
@@ -90,25 +94,56 @@ class RPSGame
   
   def display_choices
     prompt "#{human.name} chose #{human.move}"
+    sleep(1)
     prompt "#{computer.name} chose #{computer.move}"
+    sleep(1)
+  end 
+  
+  def display_score
+    prompt "#{human.name} has #{human.score} points"
+    sleep(0.25)
+    prompt "#{computer.name} has #{computer.score} points"
+    sleep(2)
   end 
   
   def display_winner
     if human.move > computer.move
       prompt "#{human.name} won!"
+      human.score += 1
     elsif computer.move > human.move
       prompt "#{computer.name} won!"
+      computer.score += 1
     else
       prompt "It's a tie"
     end 
   end 
   
+  def play_again?
+    answer = nil
+    loop do 
+      prompt "Do you wish to play again? (y or n)"
+      answer = gets.chomp.downcase
+      break if ['y', 'n'].include?(answer)
+      prompt "Please enter y or n"
+    end 
+    return true if answer == 'y'
+    false 
+  end 
+      
   def play
     display_welcome_message
-    human.choose
-    computer.choose
-    display_choices 
-    display_winner
+    loop do 
+      loop do 
+        human.choose
+        computer.choose
+        display_choices 
+        display_winner
+        display_score
+        system 'clear'
+        break if human.score == 5 || computer.score == 5
+      end 
+      break unless play_again?
+    end 
     display_goodbye_message
   end
 end
