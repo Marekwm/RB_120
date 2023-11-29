@@ -1,9 +1,18 @@
+class Person
+  
+  def intialize(player_type = :human)
+    @player_type = player_type
+  end 
+
+end 
+
+
 class RPSGame
   attr_accessor :human, :computer
 
   def initialize
     @human = Player.new
-    @computer = Player.new
+    @computer = Player.new(:computer)
   end
 
   def display_welcome_message
