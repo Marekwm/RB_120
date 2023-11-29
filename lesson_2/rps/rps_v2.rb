@@ -1,18 +1,62 @@
-class Person
+class Move
+  VALUES = ['rock', 'paper', 'scissors']
   
-  def intialize(player_type = :human)
-    @player_type = player_type
+  def intialize(v)
+    @value = v
   end 
-
 end 
 
+class Player
+  attr_accessor :move, :name
+  
+  def initialize
+    set_name
+  end 
+end 
+
+class Human < Player
+  
+  def set_name
+    n = nil
+    loop do 
+      puts "Please enter your name:"
+      n = gets.chomp.capitalize
+      break unless n.empty?
+      puts "Please enter a valid name."
+    end 
+    self.name = n
+  end 
+  
+  def choose
+    choice = nil
+    loop do 
+      puts "Please choose rock, paper or scissors"
+      choice = gets.chomp.downcase
+      break unless Move::VALUES.include?(choice)
+      puts "Please enter a valid choice."
+    end 
+    self.move = Move.new(choice)
+  end 
+end 
+
+class Computer < Player
+  
+  def set_name
+    self.name = ['Loki', 'Asta', 'Isugi', 'Rayu', 'Naruto'].sample
+  end 
+  
+  def choose
+    self.move = Move.new(Move::VALUES.sample)
+  end 
+end 
+    
 
 class RPSGame
   attr_accessor :human, :computer
 
   def initialize
-    @human = Player.new
-    @computer = Player.new(:computer)
+    @human = Human.new
+    @computer = Computer.new
   end
 
   def display_welcome_message
