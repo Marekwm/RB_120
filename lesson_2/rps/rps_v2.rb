@@ -5,8 +5,12 @@ module Prompt
 end 
 
 class Move
-  VALUES = ['rock', 'paper', 'scissors']
-  MOVES = {'rock' => 'scissors', 'scissors' => 'paper', 'paper' => 'rock'}
+  VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+  MOVES = {
+  'scissors' => ['paper', 'lizard'], 'paper' => ['rock', 'spock'],
+  'rock' => ['scissors', 'lizard'], 'lizard' => ['spock', 'paper'],
+  'spock' => ['scissors', 'rock']
+  }
   attr_reader :value
   
   def initialize(v)
@@ -14,7 +18,7 @@ class Move
   end
   
   def >(other_move)
-    return true if MOVES[value] == other_move.value
+    return true if MOVES[value].include?(other_move.value)
     false
   end 
   
@@ -49,7 +53,7 @@ class Human < Player
   def choose
     choice = nil
     loop do 
-      prompt "Please choose rock, paper or scissors"
+      prompt "Please choose rock, paper, scissors, lizard or spock"
       choice = gets.chomp.downcase
       break if Move::VALUES.include?(choice)
       prompt "Please enter a valid choice."
@@ -80,14 +84,14 @@ class RPSGame
   end
 
   def display_welcome_message
-    prompt "Hi #{human.name}! Welcome to Rock, Paper, Scissors!"
+    prompt "Hi #{human.name}! Welcome to Rock, Paper, Scissors, Lizard, Spock!"
     sleep(0.5)
     prompt "You will be playing a computer named #{computer.name} and it will randomly choose a move."
     sleep(2)
   end 
   
   def display_goodbye_message
-    prompt "Thanks for playing Rock, Paper, Scissor. Good bye!"
+    prompt "Thanks for playing Rock, Paper, Scissors, Lizard, Spock. Good bye!"
   end 
   
   def display_choices
@@ -130,6 +134,10 @@ class RPSGame
     prompt "First to #{max_score} wins, Let's get started!!!"
     sleep(1)
   end 
+  
+  def log_choices 
+    @moves << ["#{human.name}: #{human.move}", "#{computer.name}: #{computer.move}"] 
+  end
     
   def play_again?
     answer = nil
@@ -147,10 +155,12 @@ class RPSGame
     display_welcome_message
     get_max_score
     loop do 
+      @moves = []
       loop do 
         human.choose
         computer.choose
-        display_choices 
+        display_choices
+        log_choices 
         display_winner
         display_score
         system 'clear'
@@ -159,6 +169,7 @@ class RPSGame
       break unless play_again?
     end 
     display_goodbye_message
+    puts log_choices
   end
 end
 
