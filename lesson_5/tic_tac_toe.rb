@@ -159,7 +159,7 @@ class TTTGame
   end 
       
   def play
-    system 'clear'
+    
     display_welcome_message
     loop do
       display_board(false)
